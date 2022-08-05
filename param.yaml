@@ -2,7 +2,7 @@ base:
   project: simple-dvc-project
   random_state: 32
   target_column: Target
-  test_size: 0.2
+  
 
 
 data_source:
@@ -14,9 +14,9 @@ load_data:
 
 
 split_data:
-  processed_data_dir: data/processed_data
   train_path: data/processed/train_winequality.csv
   test_path: data/processed/test_winequality.csv
+  test_size: 0.2
 
 
 reports:
