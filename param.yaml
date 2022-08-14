@@ -20,7 +20,6 @@ split_data:
 
 
 reports:
-  reports_dir: report
   params: report/params.json
   scores: report/scores.json
 

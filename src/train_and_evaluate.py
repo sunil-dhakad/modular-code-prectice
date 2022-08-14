@@ -1,0 +1,95 @@
+# load train and test datasets
+# train algo
+# save metrics and parameters
+
+
+
+import os
+import pandas as pd
+import numpy as np 
+import argparse
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import ElasticNet
+from urllib.parse import urlparse
+from get_data import read_param
+import argparse
+import json
+import joblib
+
+
+def eval_metrics(actual,pred):
+    rmse=np.rqrt(mean_squared_error(actual,pred))
+    mae=mean_absolute_error(actual,pred)
+    r2=re2_score(actual,pred)
+    return rmse, mae,r2
+
+def train_and_evaluate(config_path):
+    config=read_param(config_path)
+
+    test_data_path=config["split_data"]["test_path"]
+    train_data_path=config["split_data"]["train_path"]
+    random_state=config["base"]["random_state"]
+    model_dir=config["model_dir"]
+
+    alpha=config["estimators"]["ElasticNet"]["params"]["alpha"]
+    l1_ratio=["estimators"]["ElasticNet"]["params"]["l1_ratio"]
+
+    target=config["base"]["target_column"]
+
+    train=pd.read_csv(train_data_path,sep=",")
+    test=pd.read_csv(test_data_path,sep=",")
+
+    train_x=train.drop(target,axis=1)
+    train_y=train[target]
+    test_x=test.drop(target,axis=1)
+    test_y=ttest[target]
+
+    lr=ElasticNet(alpha=alpha,l1_ratio=l1_ratio,random_state=random_state)
+    lr.fit(train_x,train_y)
+    
+    predicted_qualities=lr.predict(test_x)
+    (rmse, mae, r2)=eval_metrics(test_y,predicted_qualities)
+
+    print("Elastic model(alpha=%f,l1_ratio=%f):" %(alpha, l1_ratio))
+
+    print("RMSE: %s" % rmse)
+    print("mae: %s" % mae)
+    print("r2: %s" % r2_score)
+
+
+
+##
+scores_file=config["reports"]["scores"]
+with open(scores_file,"w") as f:
+    scores={
+        "rmse": rmse,
+        "mae":  mae,
+        "r2":  r2}
+    
+    json.dump(scores,f,indent=4)
+
+scores_file=config["reports"]["scores"]
+with open(params_file,"w") as f:
+    params={
+        "alpha":alpha,
+        "l1_ratio":l1_ratio
+    }
+    json.dump(params, f, indent=4)
+params_file=config["reports"]["params"]
+
+os.makedirs(model_dir,exist_ok=True)
+model_path=os.path.join(model_dir,"model.joblib")
+
+joblib.dump(lr,model_path)
+
+
+
+
+
+if __name__=="__main__":
+    args=argparse.ArgumentParser()
+    args.add_argument("--config",default="param.yaml")
+    parsing_method=args.parse_args()
+    train_and_evaluate(config_path=parsing_method.config)
+
