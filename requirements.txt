@@ -1,6 +1,9 @@
+# these are cmds for thisrd party install   
 dvc
 dvc[gdrive]
 sklearn
 pandas
 tox
 pytest
+
+#setup command for local package install  > >> -e
