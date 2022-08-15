@@ -1,5 +1,15 @@
+reports:
+  params: report/params.json
+  scores: report/scores.json
+
+
+
+
+
 estimators:
   ElasticNet:
     params:
-      alpha: 2
-      l1_ratio: 5
+      #alpha: 2
+      #l1_ratio: 5
+      alpha: 0.90
+      l1_ratio: 0.60
