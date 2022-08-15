@@ -19,9 +19,9 @@ import joblib
 
 
 def eval_metrics(actual,pred):
-    rmse=np.rqrt(mean_squared_error(actual,pred))
+    rmse=np.sqrt(mean_squared_error(actual,pred))
     mae=mean_absolute_error(actual,pred)
-    r2=re2_score(actual,pred)
+    r2=r2_score(actual,pred)
     return rmse, mae,r2
 
 def train_and_evaluate(config_path):
@@ -33,7 +33,7 @@ def train_and_evaluate(config_path):
     model_dir=config["model_dir"]
 
     alpha=config["estimators"]["ElasticNet"]["params"]["alpha"]
-    l1_ratio=["estimators"]["ElasticNet"]["params"]["l1_ratio"]
+    l1_ratio=config["estimators"]["ElasticNet"]["params"]["l1_ratio"]
 
     target=config["base"]["target_column"]
 
@@ -43,7 +43,7 @@ def train_and_evaluate(config_path):
     train_x=train.drop(target,axis=1)
     train_y=train[target]
     test_x=test.drop(target,axis=1)
-    test_y=ttest[target]
+    test_y=test[target]
 
     lr=ElasticNet(alpha=alpha,l1_ratio=l1_ratio,random_state=random_state)
     lr.fit(train_x,train_y)
@@ -56,33 +56,32 @@ def train_and_evaluate(config_path):
     print("RMSE: %s" % rmse)
     print("mae: %s" % mae)
     print("r2: %s" % r2_score)
-
-
-
-##
-scores_file=config["reports"]["scores"]
-with open(scores_file,"w") as f:
-    scores={
-        "rmse": rmse,
-        "mae":  mae,
-        "r2":  r2}
+    ##
+    scores_file=config["reports"]["scores"]
+    params_file=config["reports"]["params"]
     
-    json.dump(scores,f,indent=4)
-
-scores_file=config["reports"]["scores"]
-with open(params_file,"w") as f:
-    params={
-        "alpha":alpha,
-        "l1_ratio":l1_ratio
-    }
-    json.dump(params, f, indent=4)
-params_file=config["reports"]["params"]
-
-os.makedirs(model_dir,exist_ok=True)
-model_path=os.path.join(model_dir,"model.joblib")
-
-joblib.dump(lr,model_path)
-
+    with open(scores_file,"w") as f:
+        scores={
+            "rmse": rmse,
+            "mae":  mae,
+            "r2":  r2}
+        
+        json.dump(scores,f,indent=4)
+    
+    
+    with open(params_file,"w") as f:
+        params={
+            "alpha":alpha,
+            "l1_ratio":l1_ratio
+        }
+        json.dump(params, f, indent=4)
+    
+    
+    os.makedirs(model_dir,exist_ok=True)
+    model_path=os.path.join(model_dir,"model.joblib")
+    
+    joblib.dump(lr,model_path)
+    
 
 
 

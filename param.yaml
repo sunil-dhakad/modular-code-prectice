@@ -1,7 +1,7 @@
 base:
   project: simple-dvc-project
   random_state: 32
-  target_column: Target
+  target_column: quality
   
 
 
@@ -27,7 +27,7 @@ reports:
 estimators:
   ElasticNet:
     params:
-      alpha: 0.88
+      alpha: 0.70
       l1_ratio: 0.89
 
 model_dir: saved_models
