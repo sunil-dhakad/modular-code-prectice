@@ -37,14 +37,16 @@ def train_and_evaluate(config_path):
 
     target=config["base"]["target_column"]
 
-    train=pd.read_csv(train_data_path,sep=",")
+    train=pd.read_csv(train_data_path,sep=",",index_col=None)
     test=pd.read_csv(test_data_path,sep=",")
 
-    train_x=train.drop(target,axis=1)
-    train_y=train[target]
-    test_x=test.drop(target,axis=1)
-    test_y=test[target]
 
+
+    train_x=train.drop(['Unnamed: 0',target],axis=1)
+    train_y=train[target]
+    test_x=test.drop(['Unnamed: 0',target],axis=1)
+    test_y=test[target]
+    
     lr=ElasticNet(alpha=alpha,l1_ratio=l1_ratio,random_state=random_state)
     lr.fit(train_x,train_y)
     
@@ -57,6 +59,7 @@ def train_and_evaluate(config_path):
     print("mae: %s" % mae)
     print("r2: %s" % r2_score)
     ##
+    
     scores_file=config["reports"]["scores"]
     params_file=config["reports"]["params"]
     

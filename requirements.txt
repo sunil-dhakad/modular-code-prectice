@@ -5,5 +5,9 @@ sklearn
 pandas
 tox
 pytest
-
+flask
+gunicorn
 #setup command for local package install  > >> -e
+# cmds to build your own package >>> python setup.py sdist bdist wheel
+
+# flake8 >>>it is library which is style guide for coding
