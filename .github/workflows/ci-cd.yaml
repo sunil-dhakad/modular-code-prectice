@@ -1,0 +1,44 @@
+
+# GitHub Actions workflow
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions
+
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      
+
+jobs:
+  build:
+    runs_on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with: 
+        python-varsion: 3.7
+    - name: install dependencies
+      run: 
+        python -m pip install --upgrape pip
+        #pip intall flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+     #name flake8 and all its run not written   
+    - name: test with pytest
+      run: 
+        pytest -v  
+
+#    - name: deploye to heroku
+#      env:
+#        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+#        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+#      if: github.ref == refs/heads/>...< && job.status == 'success'
+#      run: 
+#        git remote add heroku >heroku link<
+#        git push heroku head: ><name<  -f 
+#    
